@@ -2,6 +2,7 @@ using UnityEngine;
 // Include the namespace required to use Unity UI and Input System
 using UnityEngine.InputSystem;
 using TMPro;
+using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour {
 	
@@ -10,9 +11,12 @@ public class PlayerController : MonoBehaviour {
 	public TextMeshProUGUI countText;
 	public GameObject winTextObject;
 
+	public GameObject restartButton;
+	public GameObject exitButton;
+
     private float movementX;
     private float movementY;
-
+	
 	private Rigidbody rb;
 	private int count;
 
@@ -29,6 +33,8 @@ public class PlayerController : MonoBehaviour {
 
         // Set the text property of the Win Text UI to an empty string, making the 'You Win' (game over message) blank
         winTextObject.SetActive(false);
+		restartButton.SetActive(false);
+		exitButton.SetActive(false);
 	}
 
 	void FixedUpdate ()
@@ -42,9 +48,9 @@ public class PlayerController : MonoBehaviour {
 	void OnTriggerEnter(Collider other) 
 	{
 		// ..and if the GameObject you intersect has the tag 'Pick Up' assigned to it..
-		if (other.gameObject.CompareTag ("PickUp"))
+		if (other.gameObject.CompareTag("PickUp"))
 		{
-			other.gameObject.SetActive (false);
+			other.gameObject.SetActive(false);
 
 			// Add one to the score variable 'count'
 			count = count + 1;
@@ -69,6 +75,8 @@ public class PlayerController : MonoBehaviour {
         if (count >= 12) 
         {
             // Set the text value of your 'winText'
+			restartButton.SetActive(true);
+			exitButton.SetActive(true);
             winTextObject.SetActive(true);
         }
     }
