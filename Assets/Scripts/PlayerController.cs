@@ -2,24 +2,25 @@ using UnityEngine;
 // Include the namespace required to use Unity UI and Input System
 using UnityEngine.InputSystem;
 using TMPro;
-using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour {
 	
 	// Create public variables for player speed, and for the Text UI game objects
 	public float speed;
 	public TextMeshProUGUI countText;
+	public TextMeshProUGUI lifeText;
 	public GameObject winTextObject;
+	public GameObject loseTextObject;
 
 	public GameObject restartButton;
 	public GameObject exitButton;
-
+	
     private float movementX;
     private float movementY;
-	
+
 	private Rigidbody rb;
 	private int count;
-
+	private int life;
 	// At the start of the game..
 	void Start ()
 	{
@@ -28,13 +29,17 @@ public class PlayerController : MonoBehaviour {
 
 		// Set the count to zero 
 		count = 0;
+		life = 3;
 
-		SetCountText ();
+		SetCountText();
+		SetLifeText();
 
         // Set the text property of the Win Text UI to an empty string, making the 'You Win' (game over message) blank
         winTextObject.SetActive(false);
+		loseTextObject.SetActive(false);
 		restartButton.SetActive(false);
 		exitButton.SetActive(false);
+
 	}
 
 	void FixedUpdate ()
@@ -48,15 +53,26 @@ public class PlayerController : MonoBehaviour {
 	void OnTriggerEnter(Collider other) 
 	{
 		// ..and if the GameObject you intersect has the tag 'Pick Up' assigned to it..
-		if (other.gameObject.CompareTag("PickUp"))
+		if (other.gameObject.CompareTag ("PickUp"))
 		{
-			other.gameObject.SetActive(false);
+			other.gameObject.SetActive (false);
 
 			// Add one to the score variable 'count'
 			count = count + 1;
 
 			// Run the 'SetCountText()' function (see below)
 			SetCountText ();
+		}
+
+		if (other.gameObject.CompareTag ("Cone"))
+		{
+			other.gameObject.SetActive (false);
+
+			// Add one to the score variable 'count'
+			life = life - 1;
+
+			// Run the 'SetCountText()' function (see below)
+			SetLifeText ();
 		}
 	}
 
@@ -75,9 +91,22 @@ public class PlayerController : MonoBehaviour {
         if (count >= 12) 
         {
             // Set the text value of your 'winText'
+            winTextObject.SetActive(true);
 			restartButton.SetActive(true);
 			exitButton.SetActive(true);
-            winTextObject.SetActive(true);
+        }
+    }
+
+	void SetLifeText()
+    {
+        countText.text = "Life: " + life.ToString();
+
+        if (life <= 0) 
+        {
+            // Set the text value of your 'winText'
+            loseTextObject.SetActive(true);
+			restartButton.SetActive(true);
+			exitButton.SetActive(true);
         }
     }
 }
