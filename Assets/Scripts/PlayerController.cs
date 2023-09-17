@@ -86,9 +86,9 @@ public class PlayerController : MonoBehaviour {
 
     void SetCountText()
     {
-        countText.text = "Count: " + count.ToString();
+        countText.text = "Boxes: " + count.ToString();
 
-        if (count >= 12) 
+        if (count >= 15) 
         {
             // Set the text value of your 'winText'
             winTextObject.SetActive(true);
@@ -99,7 +99,7 @@ public class PlayerController : MonoBehaviour {
 
 	void SetLifeText()
     {
-        countText.text = "Life: " + life.ToString();
+        lifeText.text = "Lifes: " + life.ToString();
 
         if (life <= 0) 
         {
