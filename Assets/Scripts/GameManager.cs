@@ -17,10 +17,4 @@ public class GameManager : MonoBehaviour
         // Reload the current scene to restart the game
         SceneManager.LoadScene(gameScene);
     }
-
-    public void ExitGame()
-    {
-        Debug.Log("Exit Game");
-        Application.Quit();
-    }
 }
