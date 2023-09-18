@@ -9,18 +9,21 @@ public class PlayerController : MonoBehaviour {
 	public float speed;
 	public TextMeshProUGUI countText;
 	public TextMeshProUGUI lifeText;
+	public GameObject timerText;
 	public GameObject winTextObject;
 	public GameObject loseTextObject;
-
 	public GameObject restartButton;
 	public GameObject exitButton;
-	
+	public float TimeLeft;
+    public bool TimerOn = false;
+	public TextMeshProUGUI TimerTxt;
     private float movementX;
     private float movementY;
-
 	private Rigidbody rb;
 	private int count;
+	private Vector3 movement;
 	private int life;
+	private bool stop = false;
 	// At the start of the game..
 	void Start ()
 	{
@@ -33,22 +36,60 @@ public class PlayerController : MonoBehaviour {
 
 		SetCountText();
 		SetLifeText();
-
+		TimerOn = true;
         // Set the text property of the Win Text UI to an empty string, making the 'You Win' (game over message) blank
         winTextObject.SetActive(false);
 		loseTextObject.SetActive(false);
 		restartButton.SetActive(false);
 		exitButton.SetActive(false);
+		timerText.SetActive(true);
 
 	}
 
 	void FixedUpdate ()
 	{
 		// Create a Vector3 variable, and assign X and Z to feature the horizontal and vertical float variables above
-		Vector3 movement = new Vector3 (movementX, 0.0f, movementY);
+		if (stop==false)
+		{
+			movement = new Vector3 (movementX, 0.0f, movementY);
+		}else{
+			movement = new Vector3(0.0f,0.0f,0.0f);
+		}
 
 		rb.AddForce (movement * speed);
 	}
+
+	void Update()
+    {
+        if(TimerOn)
+        {
+            if(TimeLeft > 0)
+            {
+                TimeLeft -= Time.deltaTime;
+                updateTimer(TimeLeft);
+            }
+            else
+            {
+                loseTextObject.SetActive(true);
+                restartButton.SetActive(true);
+                exitButton.SetActive(true);
+                timerText.SetActive(false);
+                TimeLeft = 0;
+                TimerOn = false;
+				stop = true;
+            }
+        }
+    }
+
+	void updateTimer(float currentTime)
+    {
+        currentTime += 1;
+
+        float minutes = Mathf.FloorToInt(currentTime / 60);
+        float seconds = Mathf.FloorToInt(currentTime % 60);
+
+        TimerTxt.text = string.Format("{0:00}:{1:00}", minutes, seconds);
+    }
 
 	void OnTriggerEnter(Collider other) 
 	{
@@ -58,7 +99,10 @@ public class PlayerController : MonoBehaviour {
 			other.gameObject.SetActive (false);
 
 			// Add one to the score variable 'count'
-			count = count + 1;
+			if(stop==false){
+				count = count + 1;
+			}
+			
 
 			// Run the 'SetCountText()' function (see below)
 			SetCountText ();
@@ -69,7 +113,10 @@ public class PlayerController : MonoBehaviour {
 			other.gameObject.SetActive (false);
 
 			// Add one to the score variable 'count'
-			life = life - 1;
+			if(stop==false){
+				life = life - 1;
+			}
+			
 
 			// Run the 'SetCountText()' function (see below)
 			SetLifeText ();
@@ -88,12 +135,15 @@ public class PlayerController : MonoBehaviour {
     {
         countText.text = "Boxes: " + count.ToString();
 
-        if (count >= 15) 
+        if (count >= 16)
         {
             // Set the text value of your 'winText'
+			count = 16;
             winTextObject.SetActive(true);
 			restartButton.SetActive(true);
 			exitButton.SetActive(true);
+			timerText.SetActive(false);
+			stop = true;
         }
     }
 
@@ -104,9 +154,12 @@ public class PlayerController : MonoBehaviour {
         if (life <= 0) 
         {
             // Set the text value of your 'winText'
+			life = 0;
             loseTextObject.SetActive(true);
 			restartButton.SetActive(true);
 			exitButton.SetActive(true);
+			timerText.SetActive(false);
+			stop = true;
         }
     }
 }
